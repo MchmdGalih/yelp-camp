@@ -2,7 +2,12 @@
 <div class="row">
   <h1 class="text-center">Form add campground</h1>
   <div class="col-6 offset-3">
-    <form action="/campgrounds/add" method="post">
+    <form
+      action="/campgrounds/add"
+      method="post"
+      class="validations-form"
+      novalidate
+    >
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input
@@ -11,7 +16,9 @@
           name="campground[title]"
           id="title"
           placeholder="Title of your Campground"
+          required
         />
+        <div class="valid-feedback">Looks good!</div>
       </div>
       <div class="mb-3">
         <label for="location" class="form-label">Location</label>
@@ -21,7 +28,9 @@
           name="campground[location]"
           id="location"
           placeholder="Location of your Campground"
+          required
         />
+        <div class="valid-feedback">Looks good!</div>
       </div>
       <div class="mb-3">
         <label for="image" class="form-label">Image Url</label>
@@ -31,11 +40,20 @@
           name="campground[image]"
           id="image"
           placeholder="https://source.unsplash.com/collection/483251"
+          required
         />
+        <div class="valid-feedback">Looks good!</div>
       </div>
       <div class="mb-3">
         <label for="price" class="form-label">Campgrounds Price</label>
-        <input class="form-control" type="text" id="price" placeholder="0.00" />
+        <input
+          class="form-control"
+          type="text"
+          id="price"
+          placeholder="0.00"
+          required
+        />
+        <div class="valid-feedback">Looks good!</div>
       </div>
 
       <div class="mb-3">
@@ -45,7 +63,9 @@
           class="form-control"
           name="campground[description]"
           id="description"
+          required
         ></textarea>
+        <div class="valid-feedback">Looks good!</div>
       </div>
       <div class="mb-3">
         <button class="btn btn-success">Add Campground</button>
@@ -55,3 +75,28 @@
     <a href="/campgrounds">All Campgrounds</a>
   </div>
 </div>
+
+<script>
+  (() => {
+    "use strict";
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll(".validations-form");
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
