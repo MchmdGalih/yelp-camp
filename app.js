@@ -7,8 +7,12 @@ const flash = require("connect-flash");
 const ejsMate = require("ejs-mate");
 const methodOverride = require("method-override");
 const ExpressErr = require("./utils/ExpressErr");
+const authRoute = require("./routes/auth");
 const campgroundRouter = require("./routes/campground");
 const reviewRouter = require("./routes/reviews");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const User = require("./models/user");
 
 //! untuk mengkoneksikan ke database.
 mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp", {
@@ -21,6 +25,11 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
   console.log("Database connected");
 });
+
+//! sett untuk menggunakan ejs.
+app.engine("ejs", ejsMate);
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
@@ -40,10 +49,12 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 
-//! sett untuk menggunakan ejs.
-app.engine("ejs", ejsMate);
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 //! untuk merender view ejs & route.
 app.get("/", (req, res) => {
@@ -57,6 +68,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// app.get("/fakeUser", async (req, res) => {
+//   const user = new User({
+//     email: "colt@gmail.com",
+//     username: "colt77",
+//   });
+
+//   const newUser = await User.register(user, "chicken");
+//   res.send(newUser);
+// });
+
+app.use("/auth", authRoute);
 app.use("/campgrounds", campgroundRouter);
 app.use("/campgrounds", reviewRouter);
 

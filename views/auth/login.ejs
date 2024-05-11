@@ -1,0 +1,50 @@
+<% layout("layout/boilerplate.ejs") %>
+<h1>Sign In</h1>
+<form action="/auth/signIn" class="validations-form" method="post" novalidate>
+  <div class="mb-3">
+    <label for="email" class="form-label">Email</label>
+    <input type="email" class="form-control" name="email" id="email" required />
+    <div class="valid-feedback">Looks good!</div>
+  </div>
+
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input
+      type="password"
+      class="form-control"
+      name="password"
+      id="password"
+      required
+    />
+    <div class="valid-feedback">Looks good!</div>
+  </div>
+
+  <div class="mb-3">
+    <button class="btn btn-success">Sign In</button>
+  </div>
+</form>
+
+<script>
+  (() => {
+    "use strict";
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll(".validations-form");
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
