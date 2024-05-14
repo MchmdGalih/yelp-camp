@@ -11,7 +11,7 @@ const authRoute = require("./routes/auth");
 const campgroundRouter = require("./routes/campground");
 const reviewRouter = require("./routes/reviews");
 const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
+const LocalStrategy = require("passport-local");
 const User = require("./models/user");
 
 //! untuk mengkoneksikan ke database.
@@ -51,8 +51,8 @@ app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 passport.use(new LocalStrategy(User.authenticate()));
+
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -61,8 +61,9 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 
-//! middleware flash.
+//! middleware global.
 app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();

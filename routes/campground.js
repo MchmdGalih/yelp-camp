@@ -4,6 +4,7 @@ const Campground = require("../models/campground");
 const catchAsync = require("../utils/asynchandler");
 const ExpressErr = require("../utils/ExpressErr");
 const { campgroundSchema } = require("../schemaValidations");
+const { isLoggedIn } = require("../middleware");
 
 const validationCampgroundSchema = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);
@@ -20,7 +21,7 @@ route.get("/", async (req, res) => {
   res.render("campgrounds/index", { allCampgrounds });
 });
 
-route.get("/add", (req, res) => {
+route.get("/add", isLoggedIn, (req, res) => {
   res.render("campgrounds/add");
 });
 
@@ -39,6 +40,7 @@ route.get(
 
 route.get(
   "/:id/edit",
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
@@ -48,6 +50,7 @@ route.get(
 
 route.post(
   "/add",
+  isLoggedIn,
   validationCampgroundSchema,
   catchAsync(async (req, res, next) => {
     req.flash("success", "Successfully made a new Campground!");
@@ -59,6 +62,7 @@ route.post(
 
 route.put(
   "/:id/edit",
+
   validationCampgroundSchema,
   catchAsync(async (req, res) => {
     const { id } = req.params;
