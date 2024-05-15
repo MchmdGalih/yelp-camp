@@ -29,7 +29,10 @@ route.get(
   "/:id",
   catchAsync(async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findById(id).populate("reviews");
+    const campground = await Campground.findById(id)
+      .populate("reviews")
+      .populate("author");
+    console.log(campground);
     if (!campground) {
       req.flash("error", "Cannot find that Campground");
       return res.redirect("/campgrounds");
@@ -55,6 +58,7 @@ route.post(
   catchAsync(async (req, res, next) => {
     req.flash("success", "Successfully made a new Campground!");
     const newCampground = new Campground(req.body.campground);
+    newCampground.author = req.user._id;
     await newCampground.save();
     res.redirect(`/campgrounds/${newCampground._id}`);
   })
