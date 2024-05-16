@@ -39,7 +39,8 @@ route.post(
     failureRedirect: "/auth/login",
   }),
   function (req, res) {
-    req.flash("success", "Welcome Back!");
+    const currentUser = req.user;
+    req.flash("success", `Welcome back ${currentUser.username}!`);
     const redirectUrl = res.locals.returnTo || "/campgrounds";
     res.redirect(redirectUrl);
   }

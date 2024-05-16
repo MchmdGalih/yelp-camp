@@ -2,19 +2,12 @@ const express = require("express");
 const route = express.Router();
 const Campground = require("../models/campground");
 const catchAsync = require("../utils/asynchandler");
-const ExpressErr = require("../utils/ExpressErr");
-const { campgroundSchema } = require("../schemaValidations");
-const { isLoggedIn } = require("../middleware");
 
-const validationCampgroundSchema = (req, res, next) => {
-  const { error } = campgroundSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressErr(msg, 400);
-  } else {
-    next();
-  }
-};
+const {
+  isLoggedIn,
+  isAuthor,
+  validationCampgroundSchema,
+} = require("../middleware");
 
 route.get("/", async (req, res) => {
   const allCampgrounds = await Campground.find({});
@@ -30,24 +23,19 @@ route.get(
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id)
-      .populate("reviews")
+      // .populate("reviews") ini cara sebelumnya.
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "author",
+        },
+      })
       .populate("author");
-    console.log(campground);
     if (!campground) {
       req.flash("error", "Cannot find that Campground");
       return res.redirect("/campgrounds");
     }
     res.render("campgrounds/show", { campground });
-  })
-);
-
-route.get(
-  "/:id/edit",
-  isLoggedIn,
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const campground = await Campground.findById(id);
-    res.render("campgrounds/edit", { campground });
   })
 );
 
@@ -64,12 +52,34 @@ route.post(
   })
 );
 
+route.get(
+  "/:id/edit",
+  isLoggedIn,
+  isAuthor,
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const campground = await Campground.findById(id);
+    if (!campground) {
+      req.flash("error", "Cannot find that Campground");
+      return res.redirect("/campgrounds");
+    }
+    res.render("campgrounds/edit", { campground });
+  })
+);
+
 route.put(
   "/:id/edit",
-
+  isAuthor,
   validationCampgroundSchema,
   catchAsync(async (req, res) => {
     const { id } = req.params;
+
+    //! author check basic.
+    // const findAuthorCampgrounds = await Campground.findById(id);
+    // if (!findAuthorCampgrounds.author.equals(req.user._id)) {
+    //   req.flash("error", "You do not have permission to do that");
+    //   return res.redirect(`/campgrounds/${id}`);
+    // }
     const updatedCampground = await Campground.findByIdAndUpdate(id, {
       ...req.body.campground,
     });
