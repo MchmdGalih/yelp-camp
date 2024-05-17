@@ -7,6 +7,7 @@
       method="post"
       class="validations-form"
       novalidate
+      enctype="multipart/form-data"
     >
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
@@ -32,7 +33,7 @@
         />
         <div class="valid-feedback">Looks good!</div>
       </div>
-      <div class="mb-3">
+      <!-- <div class="mb-3">
         <label for="image" class="form-label">Image Url</label>
         <input
           type="text"
@@ -42,9 +43,21 @@
           placeholder="https://source.unsplash.com/collection/483251"
           required
         />
+      </div> -->
+      <div class="input-group mb-3">
+        <label class="input-group-text" for="image">Upload</label>
+        <input
+          type="file"
+          class="form-control"
+          id="image"
+          name="image"
+          multiple
+        />
+
         <div class="valid-feedback">Looks good!</div>
       </div>
-      <div class="mb-3">
+
+      <!-- <div class="mb-3">
         <label for="price" class="form-label">Campgrounds Price</label>
         <input
           class="form-control"
@@ -53,6 +66,20 @@
           name="campground[price]"
           placeholder="0.00"
           required
+        />
+        
+      </div> -->
+
+      <div class="input-group mb-3">
+        <span class="input-group-text">$</span>
+        <span class="input-group-text">0.00</span>
+        <input
+          type="number"
+          class="form-control"
+          aria-label="Dollar amount (with dot and two decimal places)"
+          name="campground[price]"
+          required
+          id="price"
         />
         <div class="valid-feedback">Looks good!</div>
       </div>
