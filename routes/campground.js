@@ -37,6 +37,7 @@ route.get(
 route.put(
   "/:id/edit",
   isAuthor,
+  upload.array("image"),
   validationCampgroundSchema,
   catchAsync(campgroundController.updateCampground)
 );
