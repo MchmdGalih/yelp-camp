@@ -42,7 +42,6 @@ module.exports.createCampground = async (req, res) => {
     filename: f.filename,
   }));
   newCampground.author = req.user._id;
-  console.log(newCampground);
   await newCampground.save();
 
   req.flash("success", "Successfully made a new Campground!");
