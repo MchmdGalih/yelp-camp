@@ -1,5 +1,6 @@
 <% layout("layout/boilerplate.ejs") %>
 <link rel="stylesheet" href="/stylesheets/stars.css" />
+<link rel="stylesheet" href="/stylesheets/map.css" />
 
 <div class="row">
   <div class="col-md-6 col-12">
@@ -68,6 +69,8 @@
   </div>
 
   <div class="col-md-6 col-12">
+    <div id="map"></div>
+
     <h2 class="mt-2">Leave a Review</h2>
     <form
       class="mb-3 validations-form"
@@ -75,17 +78,6 @@
       method="post"
       novalidate
     >
-      <!-- <div class="mb-2">
-        <label for="rating" class="form-label">Rating</label>
-        <input
-          type="range"
-          class="form-range"
-          min="1"
-          max="5"
-          name="review[rating]"
-          id="rating"
-        />
-      </div> -->
       <div class="mb-3">
         <fieldset class="starability-basic">
           <legend>First rating:</legend>
@@ -162,9 +154,7 @@
         <p class="starability-result" data-rating="<%= review.rating  %>">
           Rated: <%=review.rating %>
         </p>
-        <!-- <h6 class="card-subtitle mb-2 text-muted">
-          By: <%=review.author.username%>
-        </h6> -->
+
         <p class="card-text">Review: <%=review.body%></p>
       </div>
 
@@ -181,3 +171,9 @@
     <% } %>
   </div>
 </div>
+
+<script>
+  const campground = <%- JSON.stringify(campground)%>;
+</script>
+
+<script src="/javascript/showPageMap.js"></script>

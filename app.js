@@ -60,13 +60,9 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//! untuk merender view ejs & route.
-app.get("/", (req, res) => {
-  res.render("home");
-});
-
 //! middleware global.
 app.use((req, res, next) => {
+  console.log(req.session);
   res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
@@ -86,6 +82,11 @@ app.use((req, res, next) => {
 app.use("/auth", authRoute);
 app.use("/campgrounds", campgroundRouter);
 app.use("/campgrounds", reviewRouter);
+
+//! untuk merender view ejs & route.
+app.get("/", (req, res) => {
+  res.render("home");
+});
 
 app.all("*", (req, res, next) => {
   next(new ExpressErr("Page not found", 404));

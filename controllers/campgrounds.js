@@ -1,5 +1,7 @@
+const axios = require("axios");
 const Campground = require("../models/campground");
 const { cloudinary } = require("../cloudinary");
+const GEO_BASE_URL = process.env.GEOAPIFY_BASEURL;
 
 module.exports.index = async (req, res) => {
   const allCampgrounds = await Campground.find({});
@@ -29,14 +31,19 @@ module.exports.showCampground = async (req, res) => {
 };
 
 module.exports.createCampground = async (req, res) => {
+  const geoData = await axios.get(
+    `${GEO_BASE_URL}?text=${req.body.campground.location}&apiKey=${process.env.GEO_APIKEY}`
+  );
+  const dataGeometry = geoData.data.features[0].geometry;
   const newCampground = new Campground(req.body.campground);
+  newCampground.geometry = dataGeometry;
   newCampground.images = req.files.map((f) => ({
     url: f.path,
     filename: f.filename,
   }));
   newCampground.author = req.user._id;
   await newCampground.save();
-  console.log(newCampground);
+
   req.flash("success", "Successfully made a new Campground!");
   res.redirect(`/campgrounds/${newCampground._id}`);
 };
