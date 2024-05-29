@@ -9,9 +9,10 @@ let markers = L.markerClusterGroup();
 
 for (let i = 0; i < campgrounds.length; i++) {
   let [latitude, longitude] = campgrounds[i].geometry.coordinates;
-  let title = campgrounds[i].title;
+  let title = campgrounds[i].properties.popUpMarkup;
+
   let marker = L.marker(new L.LatLng(longitude, latitude), { title: title });
-  console.log(campgrounds[i]);
+
   marker.bindPopup(title);
   markers.addLayer(marker);
 }
